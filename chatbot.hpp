@@ -19,9 +19,12 @@ class ChatBot {
 protected:
     std::string bot_name;
     std::string user_name;
+    // For v1, we store all chat history in memory within the ChatBot object.
+    // This may cause memory issues on mobile devices with long conversations.
+    // Future versions should consider persistent storage or history limits.
     std::vector<Message> chat_history;
-    std::string api_url;
-    std::string auth_token;
+    const std::string api_url;
+    const std::string auth_token;
     
     void initSafetyPrompt();
     std::string makeHttpRequest(const std::string& json_payload);

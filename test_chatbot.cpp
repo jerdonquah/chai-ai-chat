@@ -50,6 +50,29 @@ TEST_F(ChatBotTest, ClearHistoryResetsToSafetyPrompt) {
     EXPECT_EQ(history[1].second, "Alright");
 }
 
+TEST_F(ChatBotTest, GreetingInputProducesResponse) {
+    std::string response = mock_bot->sendMessage("Hello");
+    EXPECT_FALSE(response.empty());
+    EXPECT_TRUE(response.find("Hello") != std::string::npos);
+}
+
+TEST_F(ChatBotTest, QuestionInputProducesResponse) {
+    std::string response = mock_bot->sendMessage("What is 2+2?");
+    EXPECT_FALSE(response.empty());
+    EXPECT_TRUE(response.find("2+2") != std::string::npos);
+}
+
+TEST_F(ChatBotTest, EmptyInputHandling) {
+    std::string response = mock_bot->sendMessage("");
+    EXPECT_FALSE(response.empty());
+}
+
+TEST_F(ChatBotTest, LongInputHandling) {
+    std::string long_input = "This is a very long message that contains multiple sentences and should test how the chatbot handles extended user input with various punctuation marks and complex thoughts.";
+    std::string response = mock_bot->sendMessage(long_input);
+    EXPECT_FALSE(response.empty());
+}
+
 TEST(MessageTest, ToPairReturnsCorrectValues) {
     Message msg("TestSender", "TestMessage");
     auto pair = msg.toPair();

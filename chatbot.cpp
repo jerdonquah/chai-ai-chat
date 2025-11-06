@@ -42,9 +42,9 @@ std::pair<std::string, std::string> Message::toPair() const {
 }
 
 ChatBot::ChatBot(const std::string& bot, const std::string& user) 
-    : bot_name(bot), user_name(user) {
-    api_url = "http://guanaco-submitter.guanaco-backend.k2.chaiverse.com/endpoints/onsite/chat";
-    auth_token = "Bearer CR_14d43f2bf78b4b0590c2a8b87f354746";
+    : bot_name(bot), user_name(user),
+      api_url("http://guanaco-submitter.guanaco-backend.k2.chaiverse.com/endpoints/onsite/chat"),
+      auth_token("Bearer CR_14d43f2bf78b4b0590c2a8b87f354746") {
     initSafetyPrompt();
 }
 
