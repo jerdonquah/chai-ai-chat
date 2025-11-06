@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
+CXXFLAGS = -std=c++11 -Wall -Wextra -I.
 LIBS = -lcurl
 TARGET = chatbot
 TEST_TARGET = test_chatbot

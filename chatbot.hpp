@@ -3,6 +3,9 @@
 #include <vector>
 #include <utility>
 #include <curl/curl.h>
+#include <rapidjson/document.h>
+
+std::string parseJsonResponse(const std::string& json);
 
 struct Message {
     std::string sender;

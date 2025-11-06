@@ -6,6 +6,7 @@ AI chat application project using C++ with HTTP API integration.
 
 - **libcurl-devel** - For HTTP requests
 - **gtest-devel** - For unit testing
+- **rapidjson** - For JSON parsing (header-only library included)
 - **g++** with C++11 support
 
 ### Installation (Amazon Linux/RHEL/CentOS)

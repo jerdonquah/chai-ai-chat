@@ -12,6 +12,31 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, CurlRespo
     return total_size;
 }
 
+std::string parseJsonResponse(const std::string& json) {
+    rapidjson::Document doc;
+    doc.Parse(json.c_str());
+    
+    if (doc.HasParseError()) {
+        return json.find("Error:") != std::string::npos ? json : "Error: Invalid JSON response";
+    }
+    
+    if (doc.HasMember("chat_history") && doc["chat_history"].IsArray()) {
+        const auto& history = doc["chat_history"].GetArray();
+        if (history.Size() > 0) {
+            const auto& lastMsg = history[history.Size() - 1];
+            if (lastMsg.HasMember("message") && lastMsg["message"].IsString()) {
+                return lastMsg["message"].GetString();
+            }
+        }
+    }
+    
+    if (doc.HasMember("response") && doc["response"].IsString()) {
+        return doc["response"].GetString();
+    }
+    
+    return "Error: No valid response found";
+}
+
 std::pair<std::string, std::string> Message::toPair() const {
     return {sender, message};
 }
@@ -50,19 +75,7 @@ std::string ChatBot::sendMessage(const std::string& message) {
     
     std::string response = makeHttpRequest(json.str());
     
-    // Simple response parsing - in real implementation, parse JSON properly
-    std::string bot_response = response;
-    if (response.find("Error:") == std::string::npos) {
-        // Extract response from JSON (simplified)
-        size_t start = response.find("\"response\":\"");
-        if (start != std::string::npos) {
-            start += 12;
-            size_t end = response.find("\"", start);
-            if (end != std::string::npos) {
-                bot_response = response.substr(start, end - start);
-            }
-        }
-    }
+    std::string bot_response = parseJsonResponse(response);
     
     chat_history.emplace_back(bot_name, bot_response);
     return bot_response;
