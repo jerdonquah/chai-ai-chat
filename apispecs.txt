@@ -1,0 +1,47 @@
+POST
+http://guanaco-submitter.guanaco-backend.k2.chaiverse.com/endpoints/onsite/chat
+
+Headers:
+Authorization: "Bearer CR_14d43f2bf78b4b0590c2a8b87f354746"
+
+JSON BODY:
+{
+    "memory": str,
+    "prompt": str,
+    "bot_name": str,
+    "user_name": str,
+    "chat_history": List[dict[str, str]]
+}
+
+Parameter explanations:
+- memory: ** deprecated **
+- prompt: **deprecated **
+- bot_name: “Einstein”
+- user_name: This is the name assigned to agent interacting
+             with the model.
+- chat_history: This is a list of messages representing the
+                conversation history. The format of each
+                message is
+                {
+                    "sender": "sender_name",
+                    "message": "some_string"
+                }.
+
+Example payload:
+{
+    "memory": "",
+    "prompt": "”,
+    # when in QA mode - we suggest bot_name “Einstein” 
+    "bot_name": "Einstein",
+    "user_name": "User",
+    "chat_history":
+        [
+          # safety prompt - please keep
+          {"sender": "Bot", "message": "Please avoid using profanity, or being rude. Be
+                          courteous and use language which is appropriate for any audience."},
+          {"sender": "User", "message": "Alright"}, 
+          # 
+          {"sender": "Bot", "message": "Hi there"},
+          {"sender": "User", "message": "Hey Bot!"}
+        ]
+}
