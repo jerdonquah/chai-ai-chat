@@ -1,6 +1,7 @@
 #include "chatbot.hpp"
 #include <iostream>
 #include <sstream>
+#include <algorithm>
 
 struct CurlResponse {
     std::string data;
@@ -44,7 +45,8 @@ std::pair<std::string, std::string> Message::toPair() const {
 ChatBot::ChatBot(const std::string& bot, const std::string& user) 
     : bot_name(bot), user_name(user),
       api_url("http://guanaco-submitter.guanaco-backend.k2.chaiverse.com/endpoints/onsite/chat"),
-      auth_token("Bearer CR_14d43f2bf78b4b0590c2a8b87f354746") {
+      auth_token("Bearer CR_14d43f2bf78b4b0590c2a8b87f354746"),
+      deleted_count(0) {
     initSafetyPrompt();
 }
 
@@ -123,6 +125,29 @@ std::string ChatBot::makeHttpRequest(const std::string& json_payload) {
 void ChatBot::clearHistory() {
     chat_history.clear();
     initSafetyPrompt();
+}
+
+bool ChatBot::removeMessage(size_t index) {
+    if (index >= chat_history.size() || chat_history[index].sender.empty()) {
+        return false;
+    }
+    chat_history[index] = Message("", "");
+    deleted_count++;
+    
+    if (deleted_count >= CLEANUP_THRESHOLD) {
+        cleanupDeletedMessages();
+    }
+    
+    return true;
+}
+
+void ChatBot::cleanupDeletedMessages() {
+    chat_history.erase(
+        std::remove_if(chat_history.begin(), chat_history.end(),
+            [](const Message& msg) { return msg.sender.empty(); }),
+        chat_history.end()
+    );
+    deleted_count = 0;
 }
 
 MockChatBot::MockChatBot(const std::string& bot, const std::string& user) 
